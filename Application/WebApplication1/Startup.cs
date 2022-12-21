@@ -1,16 +1,18 @@
+using Bernhoeft.Api.Controllers;
+using Bernhoeft.Infra.Context;
+using Bernhoeft.Infra.Interface;
+using Bernhoeft.Infra.Repository;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using SimpleInjector;
+using Bernhoeft.Infra.Service;
+using Bernhoeft.Domain.Entity;
+using Bernhoeft.Infra.Service.Interface;
 
 namespace WebApplication1
 {
@@ -27,6 +29,11 @@ namespace WebApplication1
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddDbContext<ProductDbContext>();
+            services.AddScoped<IEntityService<Product>>(ctx => new EntityService<Product>(ctx.GetRequiredService<ProductDbContext>()));
+            services.AddScoped<IEntityService<Category>>(ctx => new EntityService<Category>(ctx.GetRequiredService<ProductDbContext>()));
+            services.AddTransient<IProductRepository>(ctx => new ProductRepository(ctx.GetRequiredService<IEntityService<Product>>()));
+            services.AddScoped(ctx => new ProductController(ctx.GetRequiredService<IProductRepository>()));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

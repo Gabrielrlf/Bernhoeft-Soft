@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infra\Bernhoeft.Infra\Bernhoeft.Infra.csproj" />
+    <ProjectReference Include="..\Bernhoeft.Domain\Bernhoeft.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
