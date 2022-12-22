@@ -1,5 +1,6 @@
 ﻿using Bernhoeft.Core.Queries;
 using Bernhoeft.Domain.Entity;
+using Bernhoeft.Infra.Context;
 using Bernhoeft.Infra.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,20 +17,25 @@ namespace Bernhoeft.Api.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
+        private readonly ProductDbContext _dbContext;
 
-        public ProductController(IProductRepository productRepository)
+        public ProductController(IProductRepository productRepository, ProductDbContext dbContext)
         {
             _productRepository = productRepository;
+            _dbContext = dbContext;
         }
 
         [HttpGet]
         public IActionResult GetAllProduct([FromQuery] string filterDescription,
                                             [FromQuery] string filterCategory,
-                                            [FromQuery] bool? filterActive)
+                                            [FromQuery] bool filterActive = false)
         {
             try
             {
-                return Ok(_productRepository.GetAll().ToList());
+               var productList =  _productRepository.GetAll(filterDescription, filterCategory, filterActive);
+
+
+                return Ok(productList);
             }
             catch (Exception e)
             {
@@ -44,22 +50,6 @@ namespace Bernhoeft.Api.Controllers
             {
                 _productRepository.CreateProduct(prod);
                 return Created("", prod);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [HttpDelete]
-        public IActionResult DeleteProduct(int id)
-        {
-            try
-            {
-                var prod = _productRepository.FindById(id);
-
-                _productRepository.DeleteProduct(prod);
-                return Ok();
             }
             catch (Exception e)
             {

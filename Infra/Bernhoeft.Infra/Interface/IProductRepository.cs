@@ -10,7 +10,9 @@ namespace Bernhoeft.Infra.Interface
 {
     public interface IProductRepository
     {
-        public IQueryable<Product> GetAll();
+        public IQueryable<Product> GetAll(string filterDescription,
+                                             string filterCategory,
+                                             bool filterActive);
         public void CreateProduct(Product prod);
         public void DeleteProduct(Product prod);
         public Product FindById(int id);

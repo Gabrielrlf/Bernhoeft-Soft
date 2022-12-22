@@ -30,9 +30,14 @@ namespace Bernhoeft.Infra.Repository
             return _rep.FindById(id);
         }
 
-        public IQueryable<Product> GetAll()
+        public IQueryable<Product> GetAll( string filterDescription,
+                                             string filterCategory,
+                                             bool filterActive)
         {
-            return _rep.List();
+            return _rep.List()
+                 .Where(x => string.IsNullOrEmpty(filterDescription) || x.Description.ToUpper() == filterDescription.ToUpper())
+                    .Where(x => string.IsNullOrEmpty(filterCategory) || x.Category.PropertyName.ToUpper() == filterCategory.ToUpper())
+                    .Where(x => x.Situation == filterActive);
         }
 
         public void UpdateProduct(Product prod)
